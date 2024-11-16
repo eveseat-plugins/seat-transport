@@ -5,7 +5,7 @@ Route::group([
     'middleware' => ['web', 'auth'],
     'prefix' => 'transport',
 ], function () {
-    Route::get('/settings', [
+    Route::get('/settings/{routeId?}', [
         'as'   => 'transportplugin.settings',
         'uses' => 'TransportPluginController@settings',
         'middleware' => 'can:transportplugin.settings'
