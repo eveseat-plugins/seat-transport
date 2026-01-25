@@ -1,7 +1,7 @@
 {
   "name": "recursivetree/seat-transport",
   "description": "Transportation quotes for hauling services",
-  "license": "MIT",
+  "license": "GPL-2.0",
   "type": "seat-plugin",
   "authors": [
     {
