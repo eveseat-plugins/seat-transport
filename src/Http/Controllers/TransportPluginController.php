@@ -17,15 +17,24 @@ use Illuminate\Http\Request;
 
 class TransportPluginController extends Controller
 {
-    public function settings()
+    public function settings(Request $request)
     {
         $stations = UniverseStation::all();
         $structures = UniverseStructure::all();
         $routes = TransportRoute::all();
         $info_text = "";
+        $route = null;
+
+        if($request->route('routeId')) {
+            $route = TransportRoute::find($request->route('routeId'));
+            logger()->debug(
+                sprintf('[Transport-Settings] Editing Id %d', $request->route('routeId')),
+                $route->toArray());
+            $info_text = $route->info_text;
+        }
 
         $price_provider = TransportPluginSettings::$PRICE_PROVIDER_INSTANCE_ID->get();
-        return view("transportplugin::settings", compact("stations", "structures", "routes", "info_text", "price_provider"));
+        return view("transportplugin::settings", compact("route", "stations", "structures", "routes", "info_text", "price_provider"));
     }
 
     public function saveSettings(Request $request)

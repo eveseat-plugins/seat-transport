@@ -30,7 +30,7 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-header">
-                Add Route
+                {{ $route ? 'Edit' : 'Add' }} Route
             </h5>
             <div class="card-text my-3 mx-3">
                 <form action="{{ route("transportplugin.saveRouteSettings") }}" method="POST">
@@ -41,10 +41,14 @@
                             <label for="source_location">Source</label>
                             <select class="form-control" id="source_location" name="source_location" required>
                                 @foreach($stations as $station)
-                                    <option value="{{ $station->station_id }}" >{{ $station->name }}</option>
+                                    <option value="{{ $station->station_id }}" {{ $route ? ($station->station_id == $route->source_location_id ? 'selected' : 'disabled') : null }} >
+                                        {{ $station->name }}
+                                    </option>
                                 @endforeach
                                 @foreach($structures as $structure)
-                                    <option value="{{ $structure->structure_id }}">{{ $structure->name }}</option>
+                                    <option value="{{ $structure->structure_id }}" {{ $route ? ($structure->structure_id == $route->source_location_id ? 'selected' : 'disabled') : null }}>
+                                        {{ $structure->name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -53,42 +57,46 @@
                             <label for="destination_location">Destination</label>
                             <select class="form-control" id="destination_location" name="destination_location" required>
                                 @foreach($stations as $station)
-                                    <option value="{{ $station->station_id }}" >{{ $station->name }}</option>
+                                    <option value="{{ $station->station_id }}" {{ $route ? ($station->station_id == $route->destination_location_id ? 'selected' : 'disabled') : null }} >
+                                        {{ $station->name }}
+                                    </option>
                                 @endforeach
                                 @foreach($structures as $structure)
-                                    <option value="{{ $structure->structure_id }}">{{ $structure->name }}</option>
+                                    <option value="{{ $structure->structure_id }}" {{ $route ? ($structure->structure_id == $route->destination_location_id ? 'selected' : 'disabled') : null }}>
+                                        {{ $structure->name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="form-group col-md-1">
                             <label for="collateral">Reward Collateral %</label>
-                            <input type="number" class="form-control" id="collateral" name="collateral" required min="0" value="10">
+                            <input type="number" class="form-control" id="collateral" name="collateral" required min="0" value="{{ $route ? $route->collateral_percentage : 10 }}">
                         </div>
 
                         <div class="form-group col-md-1">
                             <label for="iskm3">Reward isk/m<sup>3</sup></label>
-                            <input type="number" class="form-control" id="iskm3" name="iskm3" required min="0" value="20">
+                            <input type="number" class="form-control" id="iskm3" name="iskm3" required min="0" value="{{ $route ? $route->isk_per_m3 : 20 }}">
                         </div>
 
                         <div class="form-group col-md-1">
                             <label for="maxm3">Max m<sup>3</sup></label>
-                            <input type="number" class="form-control" id="maxm3" name="maxm3" min="0" value="360000">
+                            <input type="number" class="form-control" id="maxm3" name="maxm3" min="0" value="{{ $route ? $route->maxvolume : 360000 }}">
                         </div>
 
                         <div class="form-group col-md-1">
                             <label for="maxcollateral">Max Collateral</label>
-                            <input type="number" class="form-control" id="maxcollateral" name="maxcollateral" min="0" value="">
+                            <input type="number" class="form-control" id="maxcollateral" name="maxcollateral" min="0" value="{{ $route ? $route->max_collateral : null }}">
                         </div>
 
                         <div class="form-group col-md-1">
                             <label for="rushmarkup">Rush Markup %</label>
-                            <input type="number" class="form-control" id="rushmarkup" name="rushmarkup" min="0" value="20">
+                            <input type="number" class="form-control" id="rushmarkup" name="rushmarkup" min="0" value="{{ $route ? $route->rush_markup : 20 }}">
                         </div>
 
                         <div class="form-group col-md-1">
                             <label for="baseprice">Base Price</label>
-                            <input type="number" class="form-control" id="baseprice" name="baseprice" min="0" value="0">
+                            <input type="number" class="form-control" id="baseprice" name="baseprice" min="0" value="{{ $route ? $route->base_price : 0 }}">
                         </div>
                     </div>
 
@@ -97,7 +105,7 @@
                         <textarea class="form-control" name="info_text" id="info_text" rows="5" placeholder="Write anything users might want to know when they see their estimate, for example how to submit the contract.">{{ $info_text }}</textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary form-control">Add</button>
+                    <button type="submit" class="btn btn-primary form-control">{{ $route ? 'Edit' : 'Add' }}</button>
                 </form>
             </div>
         </div>
@@ -154,11 +162,16 @@
                                     {{$route->info_text}}
                                 </td>
                                 <td>
-                                    <form action="{{ route("transportplugin.deleteRoute") }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="btn btn-danger confirmdelete">Delete</button>
-                                        <input type="hidden" name="id" value="{{$route->id}}">
-                                    </form>
+                                    <div class="btn-group">
+                                        <a href="{{ route("transportplugin.settings") }}/{{$route->id}}" class="btn btn-primary">
+                                            Edit
+                                        </a>
+                                        <form action="{{ route("transportplugin.deleteRoute") }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-danger confirmdelete">Delete</button>
+                                            <input type="hidden" name="id" value="{{$route->id}}">
+                                        </form>
+                                    <div>
                                 </td>
                             </tr>
                         @endforeach

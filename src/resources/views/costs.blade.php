@@ -21,7 +21,7 @@
                     <dt>Destination</dt>
                     <dd>{{ $route->destination_location()->name }}</dd>
                     <dt>Info</dt>
-                    <dd>{{ $route->info_text ?? "Your administrator can put a text about how to create the contract here." }}</dd>
+                    <dd>{!! $route->info_text ?? "Your administrator can put a text about how to create the contract here." !!}</dd>
                 </dl>
 
                 <a href="{{ route("transportplugin.calculate",["route"=>$route->id]) }}" class="btn btn-secondary">Back</a>
